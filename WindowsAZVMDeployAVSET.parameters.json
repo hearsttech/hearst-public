@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "LocaladminUsername": {
-      "value": "HETWINADMIN"
+      "value": "<enter admin username"
     },
     "vmName": {
       "value": "<enter vm name>"
@@ -15,10 +15,10 @@
       "value": "2016-Datacenter"
     },
 	  "numberOfDataDisks": {
-      "value": 2
+      "value": 1
     },
     "DataDiskSize": {
-      "value": 512
+      "value": 128
     },
     "vnetname": {
       "value": "<enter target vnet name>"
@@ -48,7 +48,7 @@
       "value": "<Enter e-mail address of support team>"
     },
     "vhdStorageType": {
-      "value": "Premium_LRS"
+      "value": "Standard_LRS"
     },
     "AvailabilitySetName": {
       "value": "<availability set name>"

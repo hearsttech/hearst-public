@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "LocalAdminUsername": {
+    "SSHAdminUsername": {
       "type": "string",
       "minLength": 1,
       "metadata": {
@@ -157,7 +157,7 @@
     "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
     "diagnosticsStorageAccountName": "[concat(uniquestring(resourceGroup().name), 'diag')]",
     "wadmetricsresourceid": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
-    "sshKeyPath": "[concat('/home/',parameters('LocalAdminUsername'),'/.ssh/authorized_keys')]"
+    "sshKeyPath": "[concat('/home/',parameters('SSHAdminUsername'),'/.ssh/authorized_keys')]"
 
   },
   "resources": [
@@ -231,7 +231,7 @@
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('LocaladminUsername')]",
+          "adminUsername": "[parameters('SSHAdminUsername')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": true,
             "ssh": {
