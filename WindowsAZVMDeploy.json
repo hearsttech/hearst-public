@@ -1,0 +1,287 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "LocaladminUsername": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Local admin username for the VM."
+      }
+    },
+    "LocaladminPassword": {
+      "type": "securestring",
+      "minLength": 1,
+      "metadata": {
+        "description": "Local admin password for the VM."
+      }
+    },
+    "CostCenter": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Unique three-digit financial number code"
+      }
+    },
+    "BusinessUnit": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Specific name assigned to the business unit"
+      }
+    },
+	  "Product": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the product the VM will be?supporting"
+      }
+    },
+    "Application": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Describe the function of this particular VM"
+      }
+    },
+    "Environment": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "The environment in which the VM operates (e.g. Dev, Prod, QA, UAT)"
+      }
+    },
+    "SupportTeam": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "E-Mail address tied to the team that will be supporting the provisioned resource"
+      }
+    },
+    "vmName": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 15,
+      "metadata": {
+        "description": "Name for the Virtual Machine"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Virtual Machine Size"
+      }
+    },
+    "windowsOSversion": {
+      "type": "string",
+      "defaultValue": "2016-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "2016-Nano-Server",
+        "2016-Datacenter-with-Containers",
+        "2016-Datacenter"
+      ],
+      "metadata": {
+        "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter, 2016-Datacenter."
+      }
+    },
+    "numberOfDataDisks": {
+      "type": "int",
+      "minValue": 0,
+      "maxValue": 16,
+      "defaultValue": 16,
+      "metadata": {
+        "description": "The number of dataDisks to be returned in the output array."
+      }
+    },
+    "DataDiskSize": {
+      "type": "int",
+      "defaultValue": 64,
+      "allowedValues": [
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4095
+      ]
+    },
+    "vnetname": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the target Virtual Network"
+      }
+    },
+    "vnetresourcegrp": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the resource group containing the target Virtual Network"
+      }
+    },
+    "subnetname": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": { "description": "Name of the target subnet" }
+    },
+    "vhdStorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Premium_LRS",
+        "Standard_GRS",
+        "Premium_GRS"
+      ],
+      "metadata": { "description": "Enter the required storage type for the VM disks" }
+    }
+  },
+  "variables": {
+    "nicName": "[concat(parameters('vmName'), '-NIC')]",
+    "vnetId": "[resourceId(parameters('vnetresourcegrp'), 'Microsoft.Network/virtualNetworks', parameters('vnetname'))]",
+    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+    "diagnosticsStorageAccountName": "[concat(uniquestring(resourceGroup().name), 'diag')]",
+    "wadmetricsresourceid": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('diagnosticsStorageAccountName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "diagnosticStorageAccount",
+        "CostCenter": "[parameters('CostCenter')]",
+        "BusinessUnit": "[parameters('BusinessUnit')]",
+        "Product": "[parameters('Product')]",
+        "Application": "[parameters('Application')]",
+        "Environment": "[parameters('Environment')]",
+        "SupportTeam": "[parameters('SupportTeam')]"
+      },
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "Storage"
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "CostCenter": "[parameters('CostCenter')]",
+        "BusinessUnit": "[parameters('BusinessUnit')]",
+        "Product": "[parameters('Product')]",
+        "Application": "[parameters('Application')]",
+        "Environment": "[parameters('Environment')]",
+        "SupportTeam": "[parameters('SupportTeam')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "CostCenter": "[parameters('CostCenter')]",
+        "BusinessUnit": "[parameters('BusinessUnit')]",
+        "Product": "[parameters('Product')]",
+        "Application": "[parameters('Application')]",
+        "Environment": "[parameters('Environment')]",
+        "SupportTeam": "[parameters('SupportTeam')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('diagnosticsStorageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('LocaladminUsername')]",
+          "adminPassword": "[parameters('LocaladminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "managedDisk": {
+              "storageAccountType": "[parameters('vhdStorageType')]"
+            },
+            "createOption": "FromImage"
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[parameters('numberofDataDisks')]",
+              "input": {
+                "name": "[concat(parameters('vmName'), '-datadisk', copyindex('datadisks'))]",
+                "diskSizeGB": "[parameters('DataDiskSize')]",
+                "lun": "[copyIndex('dataDisks')]",
+                "createOption": "Empty",
+                "managedDisk": { "storageAccountType": "[parameters('vhdStorageType')]" }
+              }
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('diagnosticsStorageAccountName')), '2016-01-01').primaryEndpoints.blob]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'),'/BGInfo')]",
+      "apiVersion": "2018-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "BGInfo",
+        "typeHandlerVersion": "2.1",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "Properties": [
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "LocaladminUsername": {
+      "value": "server-admin"
+    },
+    "vmName": {
+      "value": "HET-TEST-VS04"
+    },
+    "vmSize": {
+      "value": "Standard_DS2_v2"
+    },
+    "linuxVersion": {
+      "value": "17.04"
+    },
+    "numberOfDataDisks": {
+      "value": 2
+    },
+    "DataDiskSize": {
+      "value": 64
+    },
+    "vnetname": {
+      "value": "AWStoAzureTestvn"
+    },
+    "vnetresourcegrp": {
+      "value": "AWStoAzureTestrg"
+    },
+    "subnetname": {
+      "value": "default"
+    },
+    "CostCenter": {
+      "value": "<Enter 3-digit cost code>"
+    },
+	  "BusinessUnit": {
+      "value": "<Enter business unit name>"
+    },
+    "Product": {
+      "value": "<Enter product name>"
+    },
+    "Application": {
+      "value": "<enter application type/name>"
+    },
+    "Environment": {
+      "value": "<Enter environment type, i.e. non-prod>"
+    },
+	  "SupportTeam": {
+      "value": "<Enter e-mail address of support team>"
+    },
+    "vhdStorageType": {
+      "value": "Premium_LRS"
+
+    }
+  }
+}
