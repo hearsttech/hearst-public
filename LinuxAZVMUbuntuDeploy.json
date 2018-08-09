@@ -9,7 +9,7 @@
         "description": "Local admin username for the VM."
       }
     },
-    "SSHPublicKey": {
+    "SSHKeyData": {
       "type": "securestring",
       "minLength": 1,
       "metadata": {
@@ -238,7 +238,7 @@
               "publicKeys": [
                 {
                   "path": "[variables('sshKeyPath')]",
-                  "keyData": "[parameters('SSHPublicKey')]"
+                  "keyData": "[parameters('SSHKeyData')]"
                 }
               ]
             }
