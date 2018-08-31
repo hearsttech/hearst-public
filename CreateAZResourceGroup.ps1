@@ -59,7 +59,7 @@
 	# Set Azure Subscription Context
     $AZContext = Get-AzureRmContext
     If ($AZContext.Subscription.Name -ne $SubscriptionName){
-	Get-AzureRmSubscription -SubscriptionName $SubscriptionName | Set-AzureRmContext
+	Get-AzureRmSubscription -SubscriptionName $SubscriptionName | Set-AzureRmContext}
 
 	#Create Site Recovery Resource Group
 	$ResourceGroup = New-AzureRmResourceGroup -Name $ResourceGroupName -Location $GeoLocation
