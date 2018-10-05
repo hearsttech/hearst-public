@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CostCenter": {
+      "value": "<Enter 3-digit cost code>"
+    },
+	  "BusinessUnit": {
+      "value": "<Enter business unit name>"
+    },
+	  "Product": {
+      "value": "<Enter product name>"
+    },
+    "Application": {
+      "value": "<enter application type/name>"
+    },
+    "Environment": {
+      "value": "<Enter environment type, i.e. non-prod>"
+    },
+	  "SupportTeam": {
+      "value": "<Enter e-mail address of support team>"
+    },
+    "virtualMachineAdminUserName": {
+      "value": "<VM Local Admin User Name>"
+    },
+    "virtualMachineAdminPassword": {
+      "value": "<VM Local Admin Password>"
+    },
+    "virtualMachineNames": {
+      "value": [
+        "VMSERVER01",
+        "VMSERVER02"
+      ]
+    },
+    "virtualMachineSize": {
+      "value": "Standard_D4S_v3"
+    },
+    "osDiskStorageType": {
+      "value": "Standard_LRS"
+    },
+    "dataDiskStorageType": {
+      "value": "Standard_LRS"
+    },
+    "dataDiskSizes": {
+      "value": []
+    },
+    "operatingSystem": {
+      "value": "2016-Datacenter"
+    },
+    "availabilitySetName": {
+      "value": ""
+    },
+    "vNetName": {
+      "value": "<Name of vNet>"
+    },
+    "vNetResourceGroup": {
+      "value": "<Name of vNet Resource Group>"
+    },
+    "subnetName": {
+      "value": "<Name of vNet Subnet>"
+    }
+  }
+}
